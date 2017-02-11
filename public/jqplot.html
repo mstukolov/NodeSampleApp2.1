@@ -1,0 +1,51 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>jqPlot Examples</title>
+
+    <!--Boostrap functionality-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-------------------------------->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/jqplot/1.0.8/jquery.jqplot.min.css" />
+</head>
+<body>
+<h1>jqPlot Examples</h1>
+
+<button type="button" onClick="buildLineChart();" class="btn-success">Построить график</button>
+<SCRIPT LANGUAGE="JavaScript">
+    //$(function() { var plot1 = $.jqplot('chartdiv',  [[[1,2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9],[13,13.1]]]); })
+   // $(function() { var plot1 = $.jqplot('chartdiv',  [graphdata]); })
+</SCRIPT>
+
+
+<div id="chartdiv" style="height:400px;width:300px; "></div>
+
+<script type="application/javascript">
+    var arr1 = [[1,2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9],[13,13.1]];
+    var arr2 = [[1,1],[2,4],[3,9],[4,16],[5,25],[6,36],[7,49]];
+    var graphdata = [];
+    var i=0;
+
+    function buildLineChart() {
+        var xValue = Math.random()*100;
+        var yValue = xValue*2+1;
+
+        console.log('xValue: ' + xValue);
+        console.log('yValue: ' + yValue);
+        graphdata.push(xValue, yValue);
+
+        $.jqplot('chartdiv',  [graphdata]);
+
+    }
+
+
+</script>
+
+</body>
+</html>
+<html>
