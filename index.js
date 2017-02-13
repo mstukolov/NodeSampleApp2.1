@@ -46,7 +46,7 @@ app.get('/data', function (req, res) {
     page += '</table>';
     res.send(page);
 });
-app.get('/hdata', function(req, res) {
+    app.get('/hdata', function(req, res) {
     var options = {
         root: __dirname + '/public/',
         dotfiles: 'deny',
@@ -58,6 +58,20 @@ app.get('/hdata', function(req, res) {
     var fileName = "index.html";
     res.sendFile(fileName, options);
 });
+
+app.get('/manage', function(req, res) {
+    var options = {
+        root: __dirname + '/public/',
+        dotfiles: 'deny',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    };
+    var fileName = "manage.html";
+    res.sendFile(fileName, options);
+});
+
 app.get('/jqplot', function(req, res) {
     var options = {
         root: __dirname + '/public/',
