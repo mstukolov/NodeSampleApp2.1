@@ -112,7 +112,7 @@ function startserver(myarr){
 }
 
 db.find
-    ({selector:{'date':{'$gt': '2017-02-07T15:15:54.946Z'}}, limit: 100000}, function(er, result) {
+    ({selector:{'date':{'$gt': '2017-02-07T15:15:54.946Z'}}, limit: 1000}, function(er, result) {
     if (er) {
         throw er;
     }

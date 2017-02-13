@@ -3,6 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>jqPlot Examples</title>
 
+    <!--Встраивание меню-->
     <!--Boostrap functionality-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -11,39 +12,145 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.dateAxisRenderer.min.js"></script>
     <link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/jqplot/1.0.8/jquery.jqplot.min.css" />
+    <!--Integrating Pie Chart-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.8/plugins/jqplot.pieRenderer.min.js"></script>
+    <style type="text/css">
+        #wrap {
+            padding:2em;
+        }
+        .panel.panel-horizontal {
+            display:table;
+            width:100%;
+        }
+        .panel.panel-horizontal > .panel-heading, .panel.panel-horizontal > .panel-body, .panel.panel-horizontal > .panel-footer {
+            display:table-cell;
+        }
+        .panel.panel-horizontal > .panel-heading, .panel.panel-horizontal > .panel-footer {
+            width: 25%;
+            border:0;
+            vertical-align: middle;
+        }
+        .panel.panel-horizontal > .panel-heading {
+            border-right: 1px solid #ddd;
+            border-top-right-radius: 0;
+            border-bottom-left-radius: 4px;
+        }
+        .panel.panel-horizontal > .panel-footer {
+            border-left: 1px solid #ddd;
+            border-top-left-radius: 0;
+            border-bottom-right-radius: 4px;
+        }
+    </style>
 </head>
 <body>
+
 <h1>jqPlot Examples</h1>
 
 <button type="button" onClick="buildLineChart();" class="btn-success">Построить график</button>
-<SCRIPT LANGUAGE="JavaScript">
-    //$(function() { var plot1 = $.jqplot('chartdiv',  [[[1,2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9],[13,13.1]]]); })
-   // $(function() { var plot1 = $.jqplot('chartdiv',  [graphdata]); })
-</SCRIPT>
+<button type="button"  onClick="renderCloudantData();" class="btn-success">График из Клауданта</button>
 
 
-<div id="chartdiv" style="height:400px;width:300px; "></div>
+<div class="panel panel-default panel-horizontal">
+    <div class="panel-heading" style="height:800px;width:150px;">
+        gdfgdhf
+    </div>
+    <div class="panel-footer" style="height:400px;width:800px;">
+        <div class="panel panel-default">
+            <div id="chartdiv2" style="height:400px;width:100%; "></div>
+        </div>
+
+        <div class="panel panel-default panel-horizontal">
+            <div id="chartdiv" class="panel-heading" style="height:400px;width:800px;"></div>
+            <div id="pie1" class="panel-footer" style="height:400px;width:800px;"></div>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 <script type="application/javascript">
-    var arr1 = [[1,2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9],[13,13.1]];
-    var arr2 = [[1,1],[2,4],[3,9],[4,16],[5,25],[6,36],[7,49]];
     var graphdata = [];
-    var i=0;
-
+    var graphdata2 = [];
+    var plot1, plot2;
+    document.onload = buildLineChart();
+    document.onload = renderCloudantData();
+    function renderGraph() {
+        if (plot1) {
+            plot1.destroy();
+        }
+        plot1 = $.jqplot('chartdiv', [graphdata],
+            {
+                axes:{
+                    yaxes:{min:0}
+                }
+            }
+        );
+    }
+    function renderGraph2() {
+        if (plot2) {
+            plot2.destroy();
+        }
+        for (var i = 0; i < graphdata2.length; i++) {
+            console.log("%s(%s)", graphdata2[i][1], graphdata2[i][0]);
+        }
+        plot2 = $.jqplot('chartdiv2', [graphdata2], {
+                title:'Статистика за последние 2 дня',
+                axes:{
+                    xaxis:{
+                        renderer:$.jqplot.DateAxisRenderer,
+                        tickInterval:'12 hour',
+                        tickOptions:{formatString:'%b %#d, %#I %p'}
+                    },
+                    yaxis:{
+                        min: 0
+                    }
+                },
+                series:[{lineWidth:4, markerOptions:{style:'circle'}}]
+            }
+        );
+    }
     function buildLineChart() {
         var xValue = Math.random()*100;
         var yValue = xValue*2+1;
-
-        console.log('xValue: ' + xValue);
-        console.log('yValue: ' + yValue);
         graphdata.push(xValue, yValue);
-
-        $.jqplot('chartdiv',  [graphdata]);
-
+        renderGraph();
+        setTimeout(buildLineChart, 1000);
     }
-
-
+    function renderCloudantData() {
+        console.log('running');
+        $.get("/dbdata", function(data) {
+            for (var i = 0; i < data.length; i++) {
+                var dateX = data[i].date.toString("yyyyMMddHHmmss").
+                replace(/T/, ' ').
+                replace(/\..+/, '');
+                graphdata2.push([dateX, (data[i].currentWeight - data[i].dryWeight)/21880]);
+            }
+            renderGraph2();
+        });
+    }
+    $(document).ready(function(){
+        var plotPie = $.jqplot('pie1', [[['a',25],['c',7]]], {
+            gridPadding: {top:0, bottom:38, left:0, right:0},
+            seriesDefaults:{
+                renderer:$.jqplot.PieRenderer,
+                trendline:{ show:false },
+                rendererOptions: { padding: 8, showDataLabels: true }
+            },
+            legend:{
+                show:true,
+                placement: 'outside',
+                rendererOptions: {
+                    numberRows: 1
+                },
+                location:'s',
+                marginTop: '15px'
+            }
+        });
+    });
 </script>
 
 </body>
