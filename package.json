@@ -7,13 +7,14 @@
     "start": "node index.js"
   },
   "author": "",
-    "dependencies": {
+  "dependencies": {
     "cfenv": "^1.0.4",
     "express": "^4.14.1",
-    "log4js": "^1.1.0"
+    "log4js": "^1.1.0",
+    "mqtt": "^2.4.0"
   },
-"repository": {},
-	"engines": {
-		"node": "4.x"
-	} 
+  "repository": {},
+  "engines": {
+    "node": "4.x"
+  }
 }

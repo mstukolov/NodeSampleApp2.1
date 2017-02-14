@@ -5,7 +5,16 @@ var express = require("express");
 var cfenv = require("cfenv");
 require('dotenv').load();
 var Cloudant = require('cloudant');
-var dateFormat = require('dateformat');
+const mqtt = require('mqtt')
+
+var options = {
+    port: '1883',
+    clientId: 'a:kwxqcy:app1',
+    username: 'a-kwxqcy-tlyk8ov99w',
+    password: '(j31(Y8TBi67uP-j*_'
+};
+
+const client = mqtt.connect('tcp://kwxqcy.messaging.internetofthings.ibmcloud.com', options)
 
 
 var app = express();
@@ -91,6 +100,35 @@ app.get("/string", function(req, res) {
     res.send(strings[n])
 });
 app.get("/dbdata", function(req, res) {
+    res.send(data)
+});
+app.get("/turnReleOn", function(req, res) {
+    console.log("Starting message publishing....");
+
+    client.on('connect', function() { // When connected
+        // publish a message to a topic
+        client.publish('iot-2/cmd/rele/fmt/json', 'my message', function() {
+            console.log("Message is published");
+            client.end(); // Close the connection when published
+        });
+    });
+
+    res.send(data)
+});
+
+app.get("/subscribeBluemix", function(req, res) {
+    var topic = 'iot-2/type/SmartCooler/id/C2MSmartCooler2/evt/+/fmt/json';
+    console.log('Connecting to: ' + topic);
+
+    client.on('connect', function () {
+        // subscribe to a topic
+        client.subscribe(topic, function() {
+            // when a message arrives, do something with it
+            client.on('message', function(topic, message, packet) {
+                console.log("Received '" + message + "' on '" + topic + "'");
+            });
+        });
+    })
     res.send(data)
 });
 
