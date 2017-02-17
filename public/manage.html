@@ -130,16 +130,16 @@
                         <ul class="nav nav-list">
                             <li><label class="tree-toggle nav-header">Основное</label>
                                 <ul class="nav nav-list tree">
-                                    <li><a href="http://localhost:4444/jqplot">Мониторинг</a></li>
-                                    <li><a href="http://localhost:4444/manage">Управление</a></li>
+                                    <li><a href="/jqplot">Мониторинг</a></li>
+                                    <li><a href="/manage">Управление</a></li>
                                     <li><label class="tree-toggle nav-header">Настройка устройств</label>
                                         <ul class="nav nav-list tree">
                                             <li><a href="#">Создать новое устройство</a></li>
                                             <li><a href="#">Просмотр устройств</a></li>
                                             <li><label class="tree-toggle nav-header">История</label>
                                                 <ul class="nav nav-list tree">
-                                                    <li><a href="http://localhost:4444/hdata">Данные в таблице</a></li>
-                                                    <li><a href="http://localhost:4444/data">Сырые данные</a></li>
+                                                    <li><a href="/hdata">Данные в таблице</a></li>
+                                                    <li><a href="/data">Сырые данные</a></li>
                                                 </ul>
                                             </li>
                                         </ul>
@@ -212,7 +212,9 @@
                     </div>
 
                 </div>
-
+                <div class="container">
+                    <h4 id="msglog"></h4>
+                </div>
                 <div class="progress">
                     <div id="pValueNow" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
                          aria-valuemin="0" aria-valuemax="100" style="width:0%">
@@ -226,7 +228,7 @@
         <div class="panel panel-default panel-horizontal">
             <!-- Таблица с данными-->
             <div class="container" style="width: 100%">
-                <h3>The columns titles are merged with the filters inputs thanks to the placeholders attributes</h3>
+                <h3>Таблица с последними сообщениями с устройства</h3>
                 <div class="row">
                     <div class="panel panel-primary filterable">
                         <div class="panel-heading">
@@ -271,19 +273,18 @@
     function TurnReleON() {
         changeReleState(true);
         $.get("/turnReleOn", function(data) {
-
+            console.log(data);
         });
-        /*
-        if(fulled <= 100) {
-            updateProgressBar(fulled);
-            fulled += 5;
-            setTimeout(TurnReleON, 100);
-        }else{
-            changeReleState(true);
-            console.log('More than 100')
-            return;
-        }*/
-
+        document.getElementById('msglog').innerHTML = 'Реле включено усешно';
+        updateProgressBar(50);
+    }
+    function TurnReleOff() {
+        changeReleState(false);
+        $.get("/turnReleOff", function(data) {
+            console.log(data);
+        });
+        document.getElementById('msglog').innerHTML = 'Реле ВЫКЛЮЧЕНО усешно';
+        updateProgressBar(100);
     }
 
     function changeReleState(isOn) {
@@ -299,26 +300,7 @@
             $('#releOff').prop('disabled', true);
         }
     }
-    function TurnReleOff() {
-        changeReleState(false);
-        /*$.get("/turnReleOn", function(data) {
 
-         });*/
-
-        /*if(fulled >= 100){
-            fulled = 0;
-            updateProgressBar(fulled);
-        }
-        if(fulled <= 100) {
-            updateProgressBar(fulled);
-            fulled += 5;
-            setTimeout(TurnReleON, 100);
-        }else{
-
-            return;
-        }*/
-
-    }
     function updateProgressBar(value) {
         var progressbar = document.getElementById("pValueNow");
         progressbar.setAttribute("aria-valuenow", value);

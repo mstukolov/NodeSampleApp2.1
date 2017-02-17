@@ -5,30 +5,21 @@ var express = require("express");
 var cfenv = require("cfenv");
 require('dotenv').load();
 var Cloudant = require('cloudant');
-const mqtt = require('mqtt')
 
-var options = {
-    port: '1883',
-    clientId: 'a:kwxqcy:app1',
-    username: 'a-kwxqcy-tlyk8ov99w',
-    password: '(j31(Y8TBi67uP-j*_'
-};
 
-const client = mqtt.connect('tcp://kwxqcy.messaging.internetofthings.ibmcloud.com', options)
+var Client = require("ibmiotf");
+var appClientConfig = {
+    "org" : 'kwxqcy',
+    "id" : 'a-kwxqcy-app1',
+    "domain": "internetofthings.ibmcloud.com",
+    "auth-key" : 'a-kwxqcy-1dw7hvzvwk',
+    "auth-token" : 'tsM8N(FS@iOc3CId+5'
+}
+var appClient = new Client.IotfApplication(appClientConfig);
+appClient.connect();
 
 
 var app = express();
-
-app.get('/', function (req, res) {
-    res.send('<h1>Hello, IOT World!</h1>');
-});
-
-app.get('/iot', function (req, res) {
-    res.send('<h1>This is IOT page!</h1>');
-});
-mymodule2 = require('./mymodules/mymodule2');
-mymodule2.fun();
-console.log(mymodule2.print())
 
 //Connect to CloudantDatabase
 var user = '3001d0cb-d7a0-4bc7-9b9d-af8547c9534e-bluemix'; // Set this to your own account
@@ -80,6 +71,18 @@ app.get('/manage', function(req, res) {
     var fileName = "manage.html";
     res.sendFile(fileName, options);
 });
+app.get('/', function (req, res) {
+    var options = {
+        root: __dirname + '/public/',
+        dotfiles: 'deny',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    };
+    var fileName = "jqplot.html";
+    res.sendFile(fileName, options);
+});
 
 app.get('/jqplot', function(req, res) {
     var options = {
@@ -102,33 +105,24 @@ app.get("/string", function(req, res) {
 app.get("/dbdata", function(req, res) {
     res.send(data)
 });
+
+
 app.get("/turnReleOn", function(req, res) {
-    console.log("Starting message publishing....");
-
-    client.on('connect', function() { // When connected
-        // publish a message to a topic
-        client.publish('iot-2/cmd/rele/fmt/json', 'my message', function() {
-            console.log("Message is published");
-            client.end(); // Close the connection when published
-        });
-    });
-
-    res.send(data)
+        var on={"rel":1};
+        on = JSON.stringify(on);
+        appClient.publishDeviceCommand("SmartCooler","C2MSmartCooler", "rele", "json", on);
+        res.send("C2MSmartCooler is on");
+});
+app.get("/turnReleOff", function(req, res) {
+    var off={"rel":0};
+    off = JSON.stringify(off);
+    appClient.publishDeviceCommand("SmartCooler","C2MSmartCooler", "rele", "json", off);
+    res.send("C2MSmartCooler is off");
 });
 
 app.get("/subscribeBluemix", function(req, res) {
-    var topic = 'iot-2/type/SmartCooler/id/C2MSmartCooler2/evt/+/fmt/json';
-    console.log('Connecting to: ' + topic);
 
-    client.on('connect', function () {
-        // subscribe to a topic
-        client.subscribe(topic, function() {
-            // when a message arrives, do something with it
-            client.on('message', function(topic, message, packet) {
-                console.log("Received '" + message + "' on '" + topic + "'");
-            });
-        });
-    })
+
     res.send(data)
 });
 
@@ -153,14 +147,14 @@ function startserver(myarr){
     lenght = myarr.length;
     data = myarr;
     console.log('Data lenght: %s', lenght);
-    var hostPort = 4444;
+    /*var hostPort = 4444;
     app.listen(hostPort, function () {
         console.log('Example app listening on port: ' + hostPort);
-    });
-    /*var appEnv = cfenv.getAppEnv();
+    });*/
+    var appEnv = cfenv.getAppEnv();
     app.listen(appEnv.port, '0.0.0.0', function () {
         console.log('Example app listening on port 3000!');
-    });*/
+    });
 }
 
 db.find
