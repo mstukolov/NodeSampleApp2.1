@@ -50,7 +50,7 @@
 <body>
 
 <h1><img src="http://www.center2m.ru/logo.png" alt="Центр 2М" title="Центр 2М" kasperskylab_antibanner="on">
-    IBM Cloud Smart Cooler System
+    Список доступных устройств
 </h1>
 
 <div class="panel panel-default panel-horizontal">
@@ -115,17 +115,37 @@
             </div>
         </div>
     </div>
-    <div class="panel-footer" style="height:400px;width:800px;">
-        <div class="panel panel-default">
-            <div id="chartdiv2" style="height:400px;width:100%; "></div>
-            <button class="button-reset">Reset Zoom</button>
-        </div>
-
-        <div class="panel panel-default panel-horizontal">
-            <div id="chartdiv" class="panel-heading" style="height:400px;width:800px;"></div>
-            <div id="pie1" class="panel-footer" style="height:400px;width:800px;"></div>
+    <!--Раздел для отображения основного окна-->
+    <div class="container" style="width: 100%">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Список устройств/h1>
+                <table class="table table-bordered table-hover" id="tableAddRow">
+                    <thead>
+                    <tr>
+                        <th>Код</th>
+                        <th>Название устройства</th>
+                        <th>Описание устройства</th>
+                        <th>Сохранить</th>
+                        <th>Регистрация</th>
+                        <th style="width:10px"><span class="glyphicon glyphicon-plus addBtn" id="addBtn_0"></span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr id="tr_0">
+                        <td><input type="text" id="deviceid" class="form-control"/></td>
+                        <td><input type="text" id="name" class="form-control" /></td>
+                        <td><input type="text" id="description" class="form-control" /></td>
+                        <td><input type="button" id="save" class="form-control" value="Сохранить"/></td>
+                        <td><input type="button" id="registration" class="form-control" value="Зарегестрировать"/></td>
+                        p<td><span class="glyphicon glyhicon-minus addBtnRemove" id="addBtnRemove_0"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+    <!--Раздел для отображения основного окна-->
 </div>
 
 
@@ -133,93 +153,38 @@
 
 
 <script type="application/javascript">
-    var graphdata = [];
-    var graphdata2 = [];
-    var plot1, plot2;
-    document.onload = buildLineChart();
-    document.onload = renderCloudantData();
-    function renderGraph() {
-        if (plot1) {
-            plot1.destroy();
-        }
-        plot1 = $.jqplot('chartdiv', [graphdata],
-            {
-                axes:{
-                    yaxes:{min:0}
-                }
-            }
-        );
-    }
-    function renderGraph2() {
-        if (plot2) {
-            plot2.destroy();
-        }
-        for (var i = 0; i < graphdata2.length; i++) {
-            console.log("%s(%s)", graphdata2[i][1], graphdata2[i][0]);
-        }
-        plot2 = $.jqplot('chartdiv2', [graphdata2], {
-                title:'Статистика за последнее время',
-                cursor:{
-                    show: true,
-                    zoom:true,
-                    showTooltip:false
-                },
-                axes:{
-                    xaxis:{
-                        renderer:$.jqplot.DateAxisRenderer,
-                        tickInterval:'12 hour',
-                        tickOptions:{
-                                    formatString:'%b %#d, %#I %p',
-                                    angle: -30
-                        }
-                    },
-                    yaxis:{
-                        min: 0
-                    }
-                },
-                series:[{lineWidth:4, markerOptions:{style:'circle'}}]
-            }
-        );
-    }
-    $('.button-reset').click(function() { plot2.resetZoom() });
-    function buildLineChart() {
-        var xValue = Math.random()*100;
-        var yValue = xValue*2+1;
-        graphdata.push(xValue, yValue);
-        renderGraph();
-        setTimeout(buildLineChart, 1000);
-    }
-    function renderCloudantData() {
-        console.log('running');
-        $.get("/dbdata", function(data) {
-            for (var i = 0; i < data.length; i++) {
-                var dateX = data[i].date.toString("yyyyMMddHHmmss").
-                replace(/T/, ' ').
-                replace(/\..+/, '');
-                graphdata2.push([dateX, (data[i].currentWeight - data[i].dryWeight)/21880]);
-            }
-            renderGraph2();
+    $(document).ready(function () {
+        $('.addBtn').on('click', function () {
+            //var trID;
+            //trID = $(this).closest('tr'); // table row ID
+            addTableRow();
         });
-    }
-    $(document).ready(function(){
-        var plotPie = $.jqplot('pie1', [[['a',25],['c',7]]], {
-            gridPadding: {top:0, bottom:38, left:0, right:0},
-            seriesDefaults:{
-                renderer:$.jqplot.PieRenderer,
-                trendline:{ show:false },
-                rendererOptions: { padding: 8, showDataLabels: true }
-            },
-            legend:{
-                show:true,
-                placement: 'outside',
-                rendererOptions: {
-                    numberRows: 1
-                },
-                location:'s',
-                marginTop: '15px'
-            }
-        });
+        $('.addBtnRemove').click(function () {
+            $(this).closest('tr').remove();
+            console.log('row deleted');
+        })
+        var i = 1;
+        function addTableRow()
+        {
+            var tempTr = $('<tr>' +
+                    '<td>' +
+                    '<input type="text" id="deviceid_' + i + '" class="form-control"/></td>' +
+                    '<td><input type="text" id="name_' + i + '" class="form-control" /></td>' +
+                    '<td><input type="text" id="description_' + i + '" class="form-control" /></td>' +
+                    '<td><input type="button" id="save_' + i + '" class="form-control" value="Сохранить"/></td>' +
+                    '<td><input type="button" id="delete_' + i + '" class="form-control" value="Зарегестрировать"/></td>' +
+                    '<td><span class="glyphicon glyphicon-minus addBtnRemove" id="addBtn_' + i + '"></span></td>' +
+                    '</tr>').on('click', function () {
+                $(this).closest('tr').remove();
+                $(document.body).on('click', '.TreatmentHistoryRemove', function (e) {
+                    $(this).closest('tr').remove();
+                });
+            });
+            $("#tableAddRow").append(tempTr)
+            i++;
+        }
     });
+
 </script>
 
 </body>

@@ -96,6 +96,19 @@ app.get('/jqplot', function(req, res) {
     var fileName = "jqplot.html";
     res.sendFile(fileName, options);
 });
+//Страница управления устройстами
+app.get('/devices', function(req, res) {
+    var options = {
+        root: __dirname + '/public/',
+        dotfiles: 'deny',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    };
+    var fileName = "devices.html";
+    res.sendFile(fileName, options);
+});
 
 app.get("/string", function(req, res) {
     var strings = ["string1", "string2", "string3"]
@@ -147,14 +160,14 @@ function startserver(myarr){
     lenght = myarr.length;
     data = myarr;
     console.log('Data lenght: %s', lenght);
-    /*var hostPort = 4444;
+    var hostPort = 4444;
     app.listen(hostPort, function () {
         console.log('Example app listening on port: ' + hostPort);
-    });*/
-    var appEnv = cfenv.getAppEnv();
+    });
+    /*var appEnv = cfenv.getAppEnv();
     app.listen(appEnv.port, '0.0.0.0', function () {
         console.log('Example app listening on port 3000!');
-    });
+    });*/
 }
 
 db.find
