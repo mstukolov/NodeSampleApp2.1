@@ -115,10 +115,10 @@ app.get("/string", function(req, res) {
     var n = Math.floor(Math.random() * strings.length)
     res.send(strings[n])
 });
+
 app.get("/dbdata", function(req, res) {
     res.send(data)
 });
-
 
 app.get("/turnReleOn", function(req, res) {
         var on={"rel":1};
@@ -126,6 +126,7 @@ app.get("/turnReleOn", function(req, res) {
         appClient.publishDeviceCommand("SmartCooler","C2MSmartCooler", "rele", "json", on);
         res.send("C2MSmartCooler is on");
 });
+
 app.get("/turnReleOff", function(req, res) {
     var off={"rel":0};
     off = JSON.stringify(off);
